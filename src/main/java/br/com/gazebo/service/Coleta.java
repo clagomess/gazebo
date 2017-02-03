@@ -30,7 +30,7 @@ public class Coleta {
                 resposta = conexao.pacoteReceber(pctResposta);
 
                 if(resposta.length > 0){
-                    rep.append(new String(resposta));
+                    rep.append(new String(resposta).substring(1, resposta.length));
 
                     while (resposta.length > 0){
                         pctEnvio = conexao.pacoteEnvio(coleta.proximaVez());
@@ -40,7 +40,7 @@ public class Coleta {
                         if(resposta[0] == 57 && resposta[1] == 93){
                             break;
                         }else{
-                            rep.append(new String(resposta));
+                            rep.append(new String(resposta).substring(1, resposta.length));
                         }
                     }
                 }else {
