@@ -1,11 +1,15 @@
 package br.com.gazebo.service;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.Socket;
 
 class Conexao {
+    private static Logger logger = LoggerFactory.getLogger(Coleta.class);
     private String ip;
 
     Conexao(String ip){
@@ -38,8 +42,12 @@ class Conexao {
     byte[] pacoteReceber(byte[] dado){
         byte[] toReturn = new byte[]{};
 
+        if(dado.length == 0){
+            return toReturn;
+        }
+
         if(dado[0] != 82 || dado[1] != 69 || dado[2] != 80){
-            System.out.println("pau");
+            logger.warn("pau");
         }else{
             int tamanho = (dado[3] - 48) * 100 + (dado[4] - 48) * 10 + (dado[5] - 48);
 
@@ -56,9 +64,7 @@ class Conexao {
     byte[] enviar(byte[] pacote){
         byte[] buffer = new byte[]{};
 
-        try {
-            Socket socket = new Socket(ip, 1365);
-
+        try (Socket socket = new Socket(ip, 1365)) {
             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
             DataInputStream in = new DataInputStream(socket.getInputStream());
 
@@ -79,7 +85,7 @@ class Conexao {
                 }
             }
         }catch (Exception e){
-            e.printStackTrace();
+            logger.warn(Conexao.class.getName(), e);
         }
 
         return buffer;

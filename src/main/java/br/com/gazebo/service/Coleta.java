@@ -1,7 +1,12 @@
 package br.com.gazebo.service;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Coleta {
+    private static Logger logger = LoggerFactory.getLogger(Coleta.class);
+
     /**
      * Comando de coleta parcial
      * @param datIni formato: ddmmyy
@@ -10,6 +15,7 @@ public class Coleta {
      * @return cmd
      */
     public String coletar(String datIni, String datFim, String ip){
+        logger.info("Iniciando conexao com {} e intervalo de {} ate {}", ip, datIni, datFim);
         Coleta coleta = new Coleta();
         Conexao conexao = new Conexao(ip);
 
@@ -31,6 +37,7 @@ public class Coleta {
 
                 if(resposta.length > 0){
                     rep.append(new String(resposta).substring(1, resposta.length));
+                    logger.info("REP HEADER: ", resposta);
 
                     while (resposta.length > 0){
                         pctEnvio = conexao.pacoteEnvio(coleta.proximaVez());
@@ -41,16 +48,17 @@ public class Coleta {
                             break;
                         }else{
                             rep.append(new String(resposta).substring(1, resposta.length));
+                            logger.info("REP LINE: ", resposta);
                         }
                     }
                 }else {
-                    System.out.print("ERROU 001");
+                    logger.warn("ERROU 001");
                 }
             }else{
-                System.out.print("ERROU 002");
+                logger.warn("ERROU 002");
             }
         }else{
-            System.out.print("ERROU 003");
+            logger.warn("ERROU 003");
         }
 
         return rep.toString();

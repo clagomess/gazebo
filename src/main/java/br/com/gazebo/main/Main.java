@@ -3,15 +3,35 @@ package br.com.gazebo.main;
 
 import br.com.gazebo.service.Coleta;
 import org.apache.commons.cli.*;
+import org.apache.log4j.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class Main {
-    public static void main (String[] args){
-        CommandLine cmd = consoleOptions(args);
+    private Main(){}
 
+    private static Logger logger = LoggerFactory.getLogger(Main.class);
+
+    public static void main (String[] args){
+        // LOGGER
+        PatternLayout patternLayout = new PatternLayout("%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n");
+        ConsoleAppender consoleAppender = new ConsoleAppender(patternLayout);
+        BasicConfigurator.configure(consoleAppender);
+        LogManager.getRootLogger().setLevel(Level.INFO);
+
+        // CMD LINE
+        CommandLine cmd = consoleOptions(args);
+        if(cmd == null){
+            System.exit(1);
+        }
+
+        // PROGRAMA
         SimpleDateFormat sdf = new SimpleDateFormat("MMyy");
         String dat = sdf.format(Calendar.getInstance().getTime());
 
@@ -25,12 +45,12 @@ public class Main {
             String filename = cmd.getOptionValue("output") + File.separator;
             filename += "coleta_" + datInicio + "_" + datFim + ".rep";
 
-            try {
-                Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename)));
+            try (FileOutputStream fos = new FileOutputStream(filename)){
+                OutputStreamWriter out = new OutputStreamWriter(fos);
                 out.write(rep);
-                out.close();
+                out.flush();
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.warn(Main.class.getName(), e);
             }
         }
     }
@@ -61,8 +81,6 @@ public class Main {
             cmd = parser.parse(options, args);
         } catch (ParseException e) {
             formatter.printHelp("gazebo", options);
-
-            System.exit(1);
         }
 
         return cmd;
