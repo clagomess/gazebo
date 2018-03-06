@@ -37,7 +37,7 @@ public class Coleta {
 
                 if(resposta.length > 0){
                     rep.append(new String(resposta).substring(1, resposta.length));
-                    logger.info("REP HEADER: ", resposta);
+                    logger.info("REP HEADER: {}", (new String(resposta)).trim());
 
                     while (resposta.length > 0){
                         pctEnvio = conexao.pacoteEnvio(coleta.proximaVez());
@@ -48,17 +48,17 @@ public class Coleta {
                             break;
                         }else{
                             rep.append(new String(resposta).substring(1, resposta.length));
-                            logger.info("REP LINE: ", resposta);
+                            logger.info("REP LINE: {}", (new String(resposta)).trim());
                         }
                     }
                 }else {
-                    logger.warn("ERROU 001");
+                    logger.error("ERROU 001");
                 }
             }else{
-                logger.warn("ERROU 002");
+                logger.error("ERROU 002");
             }
         }else{
-            logger.warn("ERROU 003");
+            logger.error("ERROU 003");
         }
 
         return rep.toString();

@@ -50,7 +50,7 @@ public class Main {
                 out.write(rep);
                 out.flush();
             } catch (Exception e) {
-                logger.warn(Main.class.getName(), e);
+                logger.error(Main.class.getName(), e);
             }
         }
     }

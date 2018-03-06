@@ -47,7 +47,7 @@ class Conexao {
         }
 
         if(dado[0] != 82 || dado[1] != 69 || dado[2] != 80){
-            logger.warn("pau");
+            logger.error("pau");
         }else{
             int tamanho = (dado[3] - 48) * 100 + (dado[4] - 48) * 10 + (dado[5] - 48);
 
@@ -65,6 +65,7 @@ class Conexao {
         byte[] buffer = new byte[]{};
 
         try (Socket socket = new Socket(ip, 1365)) {
+            socket.setSoTimeout(5 * 1000);
             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
             DataInputStream in = new DataInputStream(socket.getInputStream());
 
@@ -85,7 +86,7 @@ class Conexao {
                 }
             }
         }catch (Exception e){
-            logger.warn(Conexao.class.getName(), e);
+            logger.error(Conexao.class.getName(), e);
         }
 
         return buffer;
